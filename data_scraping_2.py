@@ -1,43 +1,41 @@
-from bs4 import BeautifulSoup as bs
-import requests
+import csv
 import pandas as pd
 
+file1 = 'data.csv'
+file2 = 'unit_converted_stars.csv'
 
-url = 'https://en.wikipedia.org/wiki/List_of_brown_dwarfs'
+d1 = []
+d2 = []
+with open(file1, 'r', encoding='utf8') as f:
+    csv_reader = csv.reader(f)
 
-page = requests.get(url)
-print(page)
+    for i in csv_reader:
+        d1.append(i)
 
-soup = bs(page.text,'html.parser')
+with open(file2, 'r', encoding='utf8') as f:
+    csv_reader = csv.reader(f)
 
-star_table = soup.find_all('table')
-print(len(star_table))
+    for i in csv_reader:
+        d2.append(i)
 
+h1 = d1[0]
+h2 = d2[0]
 
-temp_list= []
-table_rows = star_table[4].find_all('tr')
-for tr in table_rows:
-    td = tr.find_all('td')
-    row = [i.text.rstrip() for i in td]
-    temp_list.append(row)
-print(temp_list)
+pd1 = d1[1:]
+pd2 = d2[1:]
 
+h = h1 + h2
 
+p_d = []
 
-Star_names = []
-Distance =[]
-Mass = []
-Radius =[]
+for i in pd1:
+    p_d.append(i)
+for j in pd2:
+    p_d.append(j)
+with open("total_stars.csv", 'w', encoding='utf8') as f:
+    csvwriter = csv.writer(f)
+    csvwriter.writerow(h)
+    csvwriter.writerows(p_d)
 
-
-for i in range(1,len(temp_list)):
-    
-    Star_names.append(temp_list[i][0])
-    Distance.append(temp_list[i][5])
-    Mass.append(temp_list[i][7])
-    Radius.append(temp_list[i][8])
-
-df2 = pd.DataFrame(list(zip(Star_names,Distance,Mass,Radius,)),columns=['Star_name','Distance','Mass','Radius'])
-print(df2)
-
-df2.to_csv('scapee.csv')
+df = pd.read_csv('total_stars.csv')
+df.tail(8)
